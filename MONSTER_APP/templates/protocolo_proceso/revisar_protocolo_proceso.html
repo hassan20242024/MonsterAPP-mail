@@ -1,0 +1,298 @@
+{% extends "partial/body.html" %}
+
+{% load crispy_forms_tags %}
+{% load crispy_forms_filters %}
+{% block contenido %}
+{% load bootstrap5 %}
+{% load mathfilters %}
+<link href="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.0.3/b-3.0.1/b-html5-3.0.1/date-1.5.2/sl-2.0.0/datatables.min.css" rel="stylesheet">
+<br>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header bg-white">
+            <h1 class="card-title">Estado de Muestras</h1>
+          
+          </div>
+  <div class="card-body">
+   
+    <table id="examplem" class="display" >
+      <thead>
+        <tr>
+          <th style="width: 50%" class="text-left">Muestras</th>
+       
+          <th sylte="width: 50%" class="text-left">Progreso</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for p in pkt %}
+        {% for pr in p.muestras.all %}
+        <tr>
+          <td>{{pr.etapa}}, Lote: {{pr.lote_muestra}}</td>
+         
+          <td>
+           
+            {% for sq in secuencias1.all %}
+            
+            {% if sq.status == "Registrada" and sq.muestras  == pr %}
+            <div class="row">
+              <div class="col-md-6">
+                
+                <div class="widget-content-left"><div class="widget-numbers fsize-3 text-danger">12.5%</div></div>
+              </div>
+              <div class="col-md-6">
+                <div class="widget-content-left fsize-1">
+                  <div class="text-muted opacity-6 text-right">Adquiriendo</div>
+                  </div>
+              </div>
+            </div>    
+              <div class="progress">
+              <div class="progress-bar-5 bg-danger" role="progressbar" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100" style="width: 12.5%;"></div>
+              </div>
+                     
+              {% endif %}
+              {% if sq.status == "Revisada" and sq.muestras  == pr %}
+              <div class="row">
+                <div class="col-md-6 ">
+                  <div class="widget-content-left"><div class="widget-numbers fsize-3 text-warning">25%</div></div>
+                </div>
+                <div class="col-md-6 justify-content-md-end">
+                  <div class="widget-content-left fsize-1">
+                    <div class="text-muted opacity-6 text-right">Validada</div>
+                    </div>
+                </div>
+              </div>   
+              <div class="progress"><div class="progress-bar-25 bg-warning" style="width: 25%"></div>
+                </div>
+             
+              {% endif %}
+              
+                {% if sq.status == "Impresa" and sq.muestras  == pr %}
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="widget-content-left"><div class="widget-numbers fsize-3 text-success">50%</div></div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="widget-content-left fsize-1">
+                      <div class="text-muted opacity-6 text-right">Impresa</div>
+                      </div>
+                  </div>
+                </div>
+                <div class="progress"><div class="progress-bar-50 bg-success" style="width: 50%"></div>
+                  </div>
+                  
+                  {% endif %}
+                  {% if sq.status == "Reportada" and sq.muestras  == pr %}
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="widget-content-left"><div class="widget-numbers fsize-3 text-info">75%</div></div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="widget-content-left fsize-1">
+                        <div class="text-muted opacity-6 text-right">Reportada</div>
+                        </div>
+                    </div>
+                  </div>
+
+                  <div class="progress"><div class="progress-bar-75" style="background:#037e80d7;  width: 75%"></div>
+                    </div>
+                    <div class="widget-content-left fsize-1">
+                    
+                      </div>{% endif %} 
+                    {% if sq.status == "Auditada" and sq.muestras  == pr %}
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="widget-content-left"><div class="widget-numbers fsize-3 text-primary">100%</div></div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="widget-content-left fsize-1">
+                          <div class="text-muted opacity-6 text-right">Auditada</div>
+                          </div>
+                      </div>
+                    </div>
+
+                    <div class="progress"><div class="progress-bar-100 bg-primary" style="width: 100%"></div>
+                      </div>
+                        {% endif %}
+
+              {% endfor %}
+             
+          </td>
+      
+        </tr>
+        {% endfor %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+        </div>
+      </div>
+    <div class="col-md-6">
+     
+     
+        <div class="card"><br>
+          {% for p in pkt %}
+          <div class="container-fluid">
+            <h3 class="text-primary"><i class="fas fa-paint-brush"></i>{{p.codigo}}</h3><br>
+            <h5 class="text-muted">{{p.nombre}}.</h5>
+            <br>
+           
+            <b class="d-block text-muted">Avance: <span class="badge bg-primary">{{porcentajeStatusRegistrada|add:porcentajeStatusRevisada|add:porcentajeStatusImpresa|add:porcentajeStatusReportada|add:porcentajeStatusAuditada|floatformat:0}} %</span></b><br>
+      
+     
+            <b class="d-block text-muted">Fecha de ingreso</b>
+            <div class="text-muted">
+              <h5 class="text-sm">{{p.fecha_ingreso}}</h5>
+              </p>
+            </div>
+      
+            <b class="d-block text-muted">Cliente</b>
+            <div class="text-muted">
+              <h5 class="text-sm">{{p.cliente}}</h5>
+              </p>
+            </div>
+            <b class="d-block text-muted">Ensayos</b>
+            <div class="text-muted">
+              {% for ensy in p.ensayos.all %}
+              <h5 class="text-sm">{{ensy}}</h5>{%   endfor%}
+              </p>
+            </div>
+            <b class="d-block text-muted">Método de referencia</b>
+            <div class="text-muted">
+              <h5 class="text-sm">{{p.metodo}}</h5>
+            </div>
+            <b class="d-block text-muted">Metodologia</b>
+            <div class="text-muted">
+              <h5 class="text-sm">{{p.metodologia}}</h5>
+              </p>
+            </div>
+            <b class="d-block text-muted">Estado</b>
+            <div class="text-muted">
+              <h5 class="text-sm">{{p.estado_del_proceso}}</h5>
+            </div>
+            {% if p.estado_protocolo.id == 2 %}
+            <b class="d-block text-muted">Fecha de finalización</b>
+            <div class="text-muted">
+              <h5 class="text-sm">{{p.fecha_final}}</h5>
+              </p>
+            </div>
+            {% endif %}
+
+
+
+
+            <b class="d-block text-muted">Observaciones</b>
+            <div class="text-muted">
+              <h5 class="text-sm">{{p.observaciones}}</h5>
+              </p>
+            </div><br><br>
+          </div>
+        </div>{% endfor %}
+           
+
+    </div>  
+</div>
+  
+</div>  
+
+<!----------------------datatables e integración grafico inicio -->
+    <link href="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.0.3/b-3.0.1/b-html5-3.0.1/date-1.5.2/sl-2.0.0/datatables.min.css" rel="stylesheet">
+
+<script src="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.0.3/b-3.0.1/b-html5-3.0.1/date-1.5.2/sl-2.0.0/datatables.min.js"></script>
+
+    <script>
+      // Create DataTable
+const table = new DataTable('#examplem', {
+        searching:false,
+        "bPaginate": false,
+    "bLengthChange": true,
+    "bFilter": false,
+    "bInfo": false,
+    "bAutoWidth": true
+       });
+    </script>
+
+<!-- Estilos Progreso_BAR-->
+<style type="">
+    .container {
+      margin: 100px auto;
+      width: 500px;
+      text-align: center;
+    }
+    
+    .progress {
+      padding: 3px;
+      background: rgba(10, 1, 51, 0.436);
+      border-radius: 6px;
+      box-shadow: inset 0 1px 2px rgba(154, 187, 231, 0.829), 0 1px rgba(15, 93, 181, 0.566);
+    }
+    
+    .progress-bar-5 {	
+      height: 18px;
+        background-color: #3059ee;  
+      border-radius: 4px; 
+      transition: 0.2s linear;  
+      transition-property: width, background-color; 
+      animation: progressAnimationStrike5 3s;
+    }
+    @keyframes progressAnimationStrike5 {
+         from { width: 0 }
+         to   { width: 12.5% }
+    }
+    .progress-bar-25 {	
+      height: 18px;
+        background-color: #ee303c;  
+      border-radius: 4px; 
+      transition: 0.2s linear;  
+      transition-property: width, background-color; 
+      animation: progressAnimationStrike25 3s;
+    }
+    @keyframes progressAnimationStrike25 {
+         from { width: 0 }
+         to   { width: 25% }
+    }
+    .progress-bar-50 {	
+      height: 18px;
+        background-color: #ee303c;  
+      border-radius: 4px; 
+      transition: 0.2s linear;  
+      transition-property: width, background-color; 
+      animation: progressAnimationStrike50 3s;
+    }
+    @keyframes progressAnimationStrike50 {
+         from { width: 0 }
+         to   { width: 50% }
+    }
+    .progress-bar-75 {	
+      height: 18px;
+        background-color: #ee303c;  
+      border-radius: 4px; 
+      transition: 0.2s linear;  
+      transition-property: width, background-color; 
+      animation: progressAnimationStrike75 3s;
+    }
+    @keyframes progressAnimationStrike75 {
+         from { width: 0 }
+         to   { width:75% }
+    }
+    .progress-bar-100 {	
+      height: 18px;
+        background-color: #ee303c;  
+      border-radius: 4px; 
+      transition: 0.2s linear;  
+      transition-property: width, background-color; 
+      animation: progressAnimationStrike100 3s;
+    }
+    @keyframes progressAnimationStrike100 {
+         from { width: 0 }
+         to   { width: 100% }
+    }
+    
+    </style>
+<!-- Estilos Progreso BAR -->
+
+
+
+{% endblock contenido %}

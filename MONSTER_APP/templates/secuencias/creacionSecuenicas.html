@@ -1,0 +1,203 @@
+{% extends "protocolo_metodos/base_crear_protocolo_metodos.html" %}
+{% block contenido %}
+{% load bootstrap5 %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+<div class="container-fluid ">
+  <!--FILA 1. FORMULARIO INICIO-->
+<div class="card style">
+  <div class="card-header bg-info">
+    <h1 class="card-title">Registro de Secuencias</h1>
+  </div>
+  <div class="card-body">
+    <form id="form" name="form" action="" method="POST">{% csrf_token %}
+      <div class="row">
+        <div class="col-md-4">
+          {{ form.fecha_Inicio|as_crispy_field  }}
+          {{ form.sistema|as_crispy_field  }} <!--sistema-->
+          
+        </div>
+        <div class="col-md-4">
+          <div class="row">
+            <div class="col-md-6">
+              {{ form.nombre|as_crispy_field  }}
+            </div>
+            <div class="col-md-6">
+              {{ form.protocolo|as_crispy_field  }}
+            </div>
+            {{ form.parametro_sq|as_crispy_field  }}
+          </div>
+      
+        </div>
+        <div class="col-md-4">
+          {{ form.observaciones|as_crispy_field  }}
+       
+          
+        </div>
+     
+      
+
+      </div>
+      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <button class="btn btn-success" id="errorAlert" ><span class="fa fa-plus-circle"></span>Guardar</button>
+      </div>
+     
+
+
+    </form>
+  </div>
+</div>
+<!--FILA 1. FORMULARIO INICIO-->
+
+
+<!--FILA 2. TABLA DE REGISTRO INICIO-->
+<div class="card">
+  <div class="card-header bg-info">
+    <h1 class="card-title">Listado de secuencias iniciadas</h1>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead class="">
+          <tr class="text-center">
+            <th>Id</th>
+            <th>Fecha de inicio</th>
+            <th>Nombre</th>
+            <th>Protocolo</th>
+            <th>Sistema</th>
+            <th>Parámetro</th>
+            <th>Observaciones</th>
+            <th class="all text-center">Acciones</th>
+  
+          </tr>
+      </thead>
+      <tbody>
+        {% for item in secuenicas.all %}
+        <tr class="text-center">
+         <td>{{item.id}}</td>
+         <td>{{item.fecha_Inicio}}</td>
+        <td>{{item.nombre}}</td>
+          <td>{{item.protocolo}}</td>
+         <td>{{item.sistema}}</td>
+          <td>
+       
+            {{item.parametro_sq}}
+           
+          </td>
+         <td>{{item.observaciones}}</td>
+         <td>
+          <a href="{% url 'validar_secuencias' item.pk %}" class="btn btn-primary btn-circle text-center" data-bs-target="#modal_parametros_{{ item.pk }}" data-bs-toggle="modal"><span class="fa fa-edit"></span>Editar</a>
+          <a href="{}" class="btn btn-danger btn-circle"><span class="fa fa-trash"></span></a>
+      </td>
+        </tr>
+         <!-- Formulario-Edicion Modal Inicio -->
+<div class="modal fade" id="modal_parametros_{{ item.pk }}" tabindex="-1" aria-labelledby="modal_parametros" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="ModalLabel">Editar Parámetros</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form action="{% url 'validar_secuencias' item.pk %}" method="POST"> {% csrf_token %}
+              <div id="div_id_parametro_sq" class="mb-3">       
+           
+                <label class="form-label requiredField">
+                    Insumos del proceso<span class="asteriskField">*</span>
+                </label>
+    <div>
+    
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" name="id_parametro_sq" value="{{item.parametro_sq}}" id="id_parametro_sq">
+            <label for="id_parametro_sq" class="form-check-label">
+              {% for items in parametros.all %}
+                {{items.nombre_parametro}}
+                {% endfor %}
+            </label>       
+         </div>  
+        
+        
+        
+       
+    </div>
+  </div>
+    
+    
+    
+
+
+          
+              <div id="div_id_observaciones" class="mb-3">
+                      <label for="id_observaciones" class="form-label requiredField">
+                          Observaciones<span class="asteriskField">*</span>
+                      </label>
+              <input name="observaciones" value="{{item.observaciones}}" cols="40" rows="5" class="textarea form-control" required="" id="id_observaciones"></textarea>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-block" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary btn-block">Validar</button>
+              </div>
+           
+    
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+<!-- Formulario Edicion Modal Final -->
+      {% endfor %}
+      </tbody>
+  
+      </table>
+
+
+    </div>
+  </div>
+</div>
+<!--FILA 2. TABLA DE REGISTRO FINAL-->
+</div>
+
+{% block scripts %}
+<script> 
+     $(document).ready(function() {
+   $('#id_parametro_sq').multiselect(
+    {
+  enableFiltering: true,
+  filterBehavior: 'text',
+  buttonWidth: '100%',
+  enableClickableOptGroups: true,
+  enableCollapsibleOptGroups: true,
+  nonSelectedText: 'Seleccionar Parametros',
+  enableCaseInsensitiveFiltering: true,
+  includeSelectAllOption: true,
+  maxHeight: 300
+  }
+   );
+ });
+    </script>
+            {% endblock scripts %}
+
+
+
+ 
+
+{% if messages %}
+{% for m in messages %}
+
+
+{% endfor %}
+{% endif %}
+
+<!--Prueba messages de confirmacion-->
+<script src="{% static 'js/message.js' %}"></script>
+<!--Prueba messages de confirmacion-->
+
+
+
+
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" rel="stylesheet"/>
+
+  {% endblock contenido %}

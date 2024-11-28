@@ -1,0 +1,185 @@
+{% extends "protocolo_metodos/base_crear_protocolo_metodos.html" %}
+{% block contenido %}
+{% load bootstrap5 %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<!--Advanced multiselect esasy-->
+<script src="https://www.jqueryscript.net/demo/advanced-multiselect-easy/easySelect.js"></script>
+  <div class="container-fluid"><br>
+    
+    
+           <!-- Using a local copy -->
+
+<!-- Include the default stylesheet -->
+
+
+<!-- Or using a CDN -->
+
+<!-- Include the default stylesheet -->
+   
+            
+    <div class="row">
+        <!---------------------------------------Inicio Columna 1------------------------------------------------------>
+      <div class="">
+        <div class="card col-12 col-lg-7" style="background-color: #1b3d70c2;margin: auto;">
+          <h5 class="text-white text-center"><br>Editar Protocolo de Proceso</h5>
+     </div>
+        <div class="card col-12 col-lg-7" style="margin: auto;">
+          <div class="row gy-1 gy-xl-2 p-4 p-xl-4">
+            <form action=""  id="myModelForm" method="POST">
+              {% csrf_token %}
+                   
+              <div class="row">
+                <div class="col-md-6">
+                    {{ form.fecha_ingreso|as_crispy_field  }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.codigo|as_crispy_field  }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                    {{ form.cliente|as_crispy_field  }}
+                </div>
+                <div class="col-md-6">
+                  <div id="div_id_fecha_final" class="mb-3">
+                    <label for="id_fecha_final" class="form-label requiredField">
+                        Fecha del estado<span class="asteriskField">*</span>
+                    </label>
+                  <input type="date" name="fecha_final" class="numberinput form-control" required id="id_fecha_final">
+                </div>
+                </div>
+              
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                    {{ form.celda|as_crispy_field  }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.metodologia|as_crispy_field  }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                    {{ form.metodo|as_crispy_field  }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.estado_del_proceso|as_crispy_field  }}
+                </div>
+              </div>
+              {{ form.nombre|as_crispy_field  }}
+              
+
+              {{ form.Insumos_del_Proceso|as_crispy_field  }}
+            <div class="card col-md-12" >
+                {{ form.muestras|as_crispy_field  }}
+            </div>
+            <div class="col-md-12">
+              {{ form.ensayos|as_crispy_field  }}
+          </div>
+           
+            {{ form.observaciones|as_crispy_field  }}
+          
+  
+            <div class="modal-footer">
+              <a href="{% url 'protocolo_proceso' %}" onclick='salir(event)' style="background-color: #7d848ec2;" class="btn btn-dark" >Cancelar</a>
+              <button type="submit" onclick='confirmar(event)' class="btn btn-primary" style="background-color: #1b3d70c2;" >Guardar</button>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </form>
+    {% block scripts %}
+   <script>
+    $("#id_ensayos").select2({
+theme: "bootstrap-5",
+placeholder: "Seleccione",
+});
+$("#id_metodo").select2({
+theme: "bootstrap-5",
+placeholder: "Seleccione",
+});
+   
+$("#id_cliente").select2({
+theme: "bootstrap-5",
+placeholder: "Seleccione",
+});
+  </script>
+<script> 
+$(document).ready(function() {
+$('#id_muestras').css('width', '100%').multiselect(
+{
+enableFiltering: true,
+filterBehavior: 'text',
+buttonWidth: '100%',
+enableClickableOptGroups: true,
+enableCollapsibleOptGroups: true,
+nonSelectedText: 'Seleccionar muestras',
+enableCaseInsensitiveFiltering: true,
+includeSelectAllOption: true,
+maxHeight: 300
+}
+);
+});
+</script>
+
+
+
+ <!-- Validación de campos -->
+<script>
+  function confirmar(event) { 
+    let x = document.forms["myModelForm"]["fecha_final"].value;
+ if (x == "") {
+ 
+alert("Se requiere fecha final del estado");
+ e.preventDefault();
+   } 
+    event.preventDefault();
+    Swal.fire({
+  title: "Está seguro?",
+  text: "Por favor, confirme la edición del protocolo!",
+  icon: "question",
+  showCancelButton: true,
+  confirmButtonColor: "#3085d6",
+  cancelButtonColor: "#d33",
+  confirmButtonText: "Editar!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+          document.getElementById('myModelForm').submit();
+        }
+    })
+}
+</script>
+<script>
+  function salir(event) { 
+    
+    event.preventDefault();
+    Swal.fire({
+  title: "Desea salir?",
+  text: "Tu información no será guardada!",
+  icon: "warning",
+  showCancelButton: true,
+  confirmButtonColor: "#3085d6",
+  cancelButtonColor: "#d33",
+  confirmButtonText: "Confirmar",
+  cancelButtonText: "Cancelar"
+}).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/protocolo_proceso'
+        }
+    })
+}
+</script>
+  <!-- validacion de campos-->
+
+   {% endblock scripts %}
+   <!--
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+   -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" rel="stylesheet"/>
+  {% endblock contenido %}

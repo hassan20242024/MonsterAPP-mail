@@ -1,0 +1,81 @@
+
+{% extends "base.html" %}
+
+{% load bootstrap5 %}
+
+
+{% block title %}Inicia Sesión{% endblock %}
+
+{% block content %}
+    
+    {% load static %}
+    
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
+  <!-- Ionicons -->
+  <!--
+  
+  <link rel="stylesheet" href="{% static 'https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css' %}">-->
+  <!-- Tempusdominus Bbootstrap 4 -->
+  <link rel="stylesheet" href="{% static 'plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
+  <!-- iCheck -->
+  <link rel="stylesheet" href="{% static 'plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+  <!-- JQVMap -->
+  <link rel="stylesheet" href="{% static 'plugins/jqvmap/jqvmap.min.css' %}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'dist/css/adminlte.min.css' %}">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" href="{% static 'plugins/overlayScrollbars/css/OverlayScrollbars.min.css' %}">
+  <!-- Daterange picker -->
+  <link rel="stylesheet" href="{% static 'plugins/daterangepicker/daterangepicker.css' %}">
+  <!-- summernote -->
+  <link rel="stylesheet" href="{% static 'plugins/summernote/summernote-bs4.css' %}">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+
+<body class="login-page" >
+    
+    <div class="login-box" >
+  
+    <div class="card card">
+       
+               
+    <img src="/static/dist/img/all-logo-white.jpg" alt="Theme-Logo" class="" style="min-width: 400px; " >
+                
+        
+    <div class="card-body login-card-body" style="min-width: 400px;">
+    <form action="" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form layout="" %}
+        <br>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button type="submit" class="btn btn-dark btn-block">Iniciar sesión</button>
+            </div>    
+    </form><br>
+   
+  
+    </div>
+    
+    </div>
+    </div>
+    
+    
+    
+    
+    {% include "partial/js.html" %} 
+    </body>
+</div>
+
+</html>
+
+{% endblock content %}
+

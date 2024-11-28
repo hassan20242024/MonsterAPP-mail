@@ -1,0 +1,687 @@
+{% extends "partial/body.html" %}
+
+
+
+
+{% load crispy_forms_tags %}
+{% load crispy_forms_filters %}
+{% block contenido %}
+{% load bootstrap5 %}
+{% load static %}
+{% include "partial/header_gestion_secuencias.html" %}
+
+<script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
+<link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+
+
+<div class="contenido ">
+ 
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-6">
+                <br>
+                       <div class="text-right">
+            <div class="input-group rounded">
+                <input type="search" id="myInput" class="numberinput gj-textbox-md" placeholder="  Buscar..." aria-label="Search" aria-describedby="search-addon" />
+               
+              </div>
+        </div>
+    </div>
+            <div class="col-md-6" >
+              <br>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                  <a href="{% url 'crear_secuencias' %}" id="nuevaSecuencia" class="btn btn-primary" style="background:#486af3c7" data-bs-target="#crear_secuencias_en_curso" data-bs-toggle="modal"><span class="fa fa-plus-circle"></span> Nueva secuencia</a>
+                  <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                    <button type="button" style="background:#486af3b8" class="btn btn-primary" data-toggle="collapse" data-target="#validarChecked" data-target="#demo2" aria-controls="demo2" id="botonValidarSecuencia"  colspan="" onclick="ocultarPe()"><span class="fa fa-thumbs-up"></span> Validar</button>
+                  
+                    <div class="btn-group" role="group" id="botonInvalidar">
+                      <button type="button"  style="background:#ec1717b4" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" onclick="ocultarIn()"><span class="fa fa-thumbs-down"></span>
+                        Invalidar
+                      </button>
+                      
+                        <ul class="dropdown-menu  dropdown-menu-sm-start">
+                          <li><a class="dropdown-item" data-toggle="collapse" onclick="deshabilitarIn()" data-target="#invalidarChecked" data-target="#demo2" aria-controls="demo2"  colspan="">Problemas de Equipo (Equipo Presionado, Linea Base Defectuosa)</a></li>
+                          <li><a class="dropdown-item" data-toggle="collapse" onclick="deshabilitarIn()" data-target="#invalidarChecked1" data-target="#demo2" aria-controls="demo2"  colspan="">Problemas de Equipo (Otros: Caidas de Presión, Picos Fantasmas; Problemas de Software/Hadware...)</a></li>
+                          <li><a class="dropdown-item" data-toggle="collapse" onclick="deshabilitarIn()" data-target="#invalidarChecked2" data-target="#demo2" aria-controls="demo2"  colspan="">Problemas de Columna</a></li>
+                          <li><a class="dropdown-item" data-toggle="collapse" onclick="deshabilitarIn()" data-target="#invalidarChecked3" data-target="#demo2" aria-controls="demo2"  colspan="">Incumplimiento de System (RSD)</a></li>
+                          <li><a class="dropdown-item" data-toggle="collapse" onclick="deshabilitarIn()" data-target="#invalidarChecked4" data-target="#demo2" aria-controls="demo2"  colspan="">Incumplimiento de System (Otros: Resolución, Asimetria, Platos Teóricos, Señal Ruido)</a></li>
+                          <li><a class="dropdown-item" data-toggle="collapse" onclick="deshabilitarIn()" data-target="#invalidarChecked5" data-target="#demo2" aria-controls="demo2"  colspan="">Incumplimiento de System (Correlación)</a></li>
+                          <li><a class="dropdown-item" data-toggle="collapse" onclick="deshabilitarIn()" data-target="#invalidarChecked6" data-target="#demo2" aria-controls="demo2"  colspan="">Problemas de Fases Móviles (TR Corridos, FM Saturada, Otros...)</a></li>
+                          <li><a class="dropdown-item" data-toggle="collapse" onclick="deshabilitarIn()" data-target="#invalidarChecked7" data-target="#demo2" aria-controls="demo2"  colspan="">Problemas de Red</a></li>
+                          <li><a class="dropdown-item" data-toggle="collapse" onclick="deshabilitarIn()" data-target="#invalidarChecked8" data-target="#demo2" aria-controls="demo2"  colspan="">Fallas de Fluido Eléctrico</a></li>
+                          <li><a class="dropdown-item" data-toggle="collapse" onclick="deshabilitarIn()" data-target="#invalidarChecked9" data-target="#demo2" aria-controls="demo2"  colspan="">Otros (Definir en Observaciones)</a></li>
+                        </ul>
+  
+                    </div>
+                  </div>
+
+                  </div>
+        </div>
+          </div><br>
+                <div class="">
+                <div class="card">
+                  
+                  <div class="container-fluid">
+                    <div class="row">
+                  </div>
+                    <div class="card-body table-responsive" id="">
+                      <form action="{% url 'cambiar_estado_validada_revisada' %}" method="POST" id="myModelFormActualizar" >{% csrf_token %}
+                        <table class="table  table-bordered display" id="example3">
+                        <thead class="" >
+                            <tr class="">
+                                <th class="text-center" style="display: None;">Fecha inicial</th>
+                                <th class="text-center">Secuencias</th>
+                                <th class="text-center">Sistemas</th>
+                                <th class="text-center">Protocolos/Métodos</th>
+                                <th class="text-center">Parámetros</th>
+                                <th class="text-center">Muestras/Placebos/MP...</th>
+                                {% if perms.Secuencias.view_usuario_impresion %}
+                                <th  id="validarChecked"  class="collapse multi-collapse text-center">Validar</th>
+                                <th  id="invalidarChecked"  class="collapse multi-collapse text-center" >Invalidar: </th>
+                                <th  id="invalidarChecked1"  class="collapse multi-collapse text-center" >Invalidar</th>
+                                <th  id="invalidarChecked2"  class="collapse multi-collapse text-center" >Invalidar</th>
+                                <th  id="invalidarChecked3"  class="collapse multi-collapse text-center" >Invalidar</th>
+                                <th  id="invalidarChecked4"  class="collapse multi-collapse text-center" >Invalidar</th>
+                                <th  id="invalidarChecked5"  class="collapse multi-collapse text-center" >Invalidar</th>
+                                <th  id="invalidarChecked6"  class="collapse multi-collapse text-center" >Invalidar</th>
+                                <th  id="invalidarChecked7"  class="collapse multi-collapse text-center" >Invalidar</th>
+                                <th  id="invalidarChecked8"  class="collapse multi-collapse text-center" >Invalidar</th>
+                                <th  id="invalidarChecked9"  class="collapse multi-collapse text-center" >Invalidar</th>
+                                <th class="text-center">Editar</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody id="myTable">
+                            {% for item in secuenicas.all %}
+                            {% if item.status == "Registrada" %}
+                            <tr>
+                                <td class="text-center" style="display: None;">{{item.fecha_Inicio|date:'Y-m-d H:i'}}</td>
+                                <td class="text-center" >{{item.nombre}} </td>
+                                <td class="text-center" >{{item.sistema}}</td>
+                                <td class="text-center"  >
+                                  {% if item.metodo == None and item.protocolo_proceso == None %}
+                                  {{item.protocolo}}
+                                  {% endif %}
+                                  {% if item.metodo == None and item.protocolo == None %}
+                                  {{item.protocolo_proceso}}
+                                  {% endif %}
+                                  {% if item.protocolo == None and item.protocolo_proceso == None %}
+                                  {{item.metodo}}
+                                  {% endif %}
+                                </td>
+                              
+                                <td class="text-center" > {% if item.parametro_sq.id > 0 %}
+                                  {{item.parametro_sq}}
+                                  <a href="{% url 'agregar_otra_secuencia_parametro' item.pk %}" title="Agregar muestra" class="text-center"><span class="fa fa-plus-circle" ></span></a>
+                                  {% else %}
+                                  No aplica
+                                  {% endif %}
+                                </td>
+                                <td data-toggle="collapse" data-target="#demo1" class="accordion-toggle text-center" colspan="" class="hiddenRow"> {% if item.parametro_sq.id == None %}
+                                  
+                                  <div class="accordian-body collapse" id="demo1"> {{item.muestras.nombre_muestra}} {{item.muestras.lote_muestra}} {{item.muestras.codigo_muestra_producto}} </div>Etapa: {{item.muestras.etapa}}
+                                  
+                                  <a href="{% url 'agregar_otra_secuencia_muestra' item.pk %}" title="Agregar muestra" class="text-center"><span class="fa fa-plus-circle" ></span></a>
+                                  {% else %}
+                                  {% for p in item.protocolo.muestras_y_Placebos.all %}
+                                  Código: {{p.codigo_muestra_producto}}. 
+                                  <div class="accordian-body collapse" id="demo1"> {{p.nombre_muestra}} {{p.lote_muestra}}</div>{% endfor %}
+                                  {% endif %}
+                                </td>
+                                
+                                {% if perms.Secuencias.view_usuario_impresion %}
+                                <td  id="validarChecked"  class="collapse multi-collapse text-center">
+                                  <span><input type="checkbox" onChange="ocultarEstado_invalidar(this);" name="validar_revisar" id="id"  value="{{item.id}}" title="validar"></span>
+                                </td>
+                                  <td  id="invalidarChecked"  class="collapse multi-collapse text-center">
+                                    <input type="checkbox" onChange="ocultarEstado_invalidar(this);"  value="{{item.id}}" name= "problemas_equipo_1" id="id1" title="Problemas de equipo (Equipo presionado, Linea base defectuosa)">
+                                    <label for="id1">Problemas de Equipo</label>
+                                  </td>
+                                  <td  id="invalidarChecked1"  class="collapse multi-collapse text-center" title="Problemas de equipo (Otros: Caidas de presión, Picos fantasmas; Problemas de software/hadware...)">
+                                    <input type="checkbox" onChange="ocultarEstado_invalidar(this);"  value="{{item.id}}" name= "problemas_equipo_2" id="id2">
+                                    <label for="id2">Problemas de Equipo</label>
+                                  </td>
+                                  <td  id="invalidarChecked2"  class="collapse multi-collapse text-center" title="Problemas de columna">
+                                    <input type="checkbox" onChange="ocultarEstado_invalidar(this);"  value="{{item.id}}" name= "problemas_columna" id="id3">
+                                    <label for="id3">Problemas de Columna</label>
+                                  </td>
+                                  <td  id="invalidarChecked3"  class="collapse multi-collapse text-center" title="Incumplimiento de System (RSD)">
+                                    <input type="checkbox" onChange="ocultarEstado_invalidar(this);"  value="{{item.id}}" name= "incumplimientoSST1" id="id4">
+                                    <label for="id4">Incumplimiento de System</label>
+                                  </td>
+                                  <td  id="invalidarChecked4"  class="collapse multi-collapse text-center" title="Incumplimiento de System (Otros: Resolución, Asimetria, Platos teóricos, Señal ruido)">
+                                    <input type="checkbox" onChange="ocultarEstado_invalidar(this);" value="{{item.id}}" name= "incumplimientoSST2" id="id5">
+                                    <label for="id5">Incumplimiento de System</label>
+                                  </td>
+                                  <td  id="invalidarChecked5"  class="collapse multi-collapse text-center" title="Incumplimiento de System (Correlación)">
+                                    <input type="checkbox" onChange="ocultarEstado_invalidar(this);"  value="{{item.id}}" name= "incumplimientoSST3" id="id6">
+                                    <label for="id6">Incumplimiento de Correlación</label>
+                                  </td>
+                                  <td  id="invalidarChecked6"  class="collapse multi-collapse text-center" title="Problemas de Fases Móviles (TR Corridos, FM saturada, Otros...)">
+                                    <input type="checkbox" onChange="ocultarEstado_invalidar(this);"  value="{{item.id}}" name= "problemas_de_FM" id="id7">
+                                    <label for="id7">Problemas de Fases Móviles</label>
+                                  </td>
+                                  <td  id="invalidarChecked7"  class="collapse multi-collapse" title="Problemas de red">
+                                    <input type="checkbox" onChange="ocultarEstado_invalidar(this);"  value="{{item.id}}" name= "Problemas_de_red" id="id8">
+                                    <label for="id8">Problemas de Red</label>
+                                  </td>
+                                  <td  id="invalidarChecked8"  class="collapse multi-collapse text-center" title="Fallas de Fluido Eléctrico">
+                                    <input type="checkbox" onChange="ocultarEstado_invalidar(this);"  value="{{item.id}}" name= "falla__fluido_electrico" id="id9">
+                                    <label for="id9">Fallas de Fluido Eléctrico</label>
+                                  </td>
+                                  <td  id="invalidarChecked9"  class="collapse multi-collapse text-center" title="Otros (definir en observaciones)">
+                                    <input type="checkbox" onChange="ocultarEstado_invalidar(this);"  value="{{item.id}}" name= "otros" id="id10">
+                                    <label for="id10">Otros</label>
+                                  </td>
+                                  <td class="text-center">
+                              
+                                    <a href="{% url 'editar_secuencias_en_curso' item.pk %}" title="Editar" class=" btn-primary btn-circle btn-sm text-center" style="background:#486af3b8"><span class="fa fa-edit "></span></a>
+                                
+                                  </td>
+
+                                  {% endif %}
+                                  
+                            </tr >
+                            <script>
+                              
+                            </script>
+        <script>
+        $('.accordian-body').on('show.bs.collapse', function () {
+        $(this).closest("table")
+        .find(".collapse.in")
+        .not(this)
+        .collapse('toggle')
+        })
+        </script>
+
+
+            {% endif %}
+          {% endfor%}
+        </tbody>
+        <div class="row">
+          <div class="col-md-6">
+          </div>
+          <div class="col-md-6">
+              <div class=" d-grid gap-2 d-md-flex justify-content-md-end">
+                  <button type="submit" class="btn btn-primary  btn-sm position-relative " id="actualizarEstado" style="background:#486af3b8; display: none;"  onclick='confirmarEstado(event)'><span class="fas fa-edit"></span>Actualizar estado</button>
+                  <button type="button" id="cancelarEstado"style="background:#ec1717b4; display: none;" class="btn btn-danger  btn-sm position-relative " onclick='salir(event)'><span class="fa fa-window-close"></span> Cancelar</button>
+                  <br><br>
+                  </div>
+          </div>
+</table>
+      </form>
+        
+      <!------------------------------- Formulario-Creación Modal Inicio------------------------------------------ -->
+  <div class="modal fade" data-bs-backdrop="static"  id="crear_secuencias_en_curso" tabindex="-1" aria-labelledby="modal_parametros_creacion" aria-hidden="true">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+  </button>
+    <div class="modal-dialog modal-lg">
+      
+        <div class="modal-content">
+          
+          <div class="modal-header text-white" style="background-color: #1b3d70c2;">
+            <h1 class="modal-title fs-5" id="ModalLabel">Crerar Secuencia</h1>
+            <!--
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            -->
+          </div>
+          <div class="modal-body">
+            
+              <form  name="myFormCreacion" id="myFormCreacion"  action="{% url 'crear_secuencias' %}"  method="POST"> {% csrf_token %}
+                <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
+                <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />  
+                  <!--FECHA_INVALIZ PARA EVITAR REGISTROS DUPLICADOS -->
+                <!--FECHA_INVALIZ PARA EVITAR REGISTROS DUPLICADOS --> 
+                 <div class="row">
+                  <div class="col-md-6">
+                       <!--FECHA_INICIO--> 
+              <label for="fecha_Inicio">Fecha de Inicio</label>
+              <input  value="" type="datetime-local" name="fecha_Inicio" class="numberinput form-control gj-textbox-md" id="fecha_Inicio" width="" data-datepicker="true" required > 
+            <br>            
+                <!--FECHA_INICIO-->
+             <!--FECHA_Y_HORA_FINAL--> 
+             <div style="display: None;">
+
+              <input  value="" type="datetime-local" name="fecha_Final" class="numberinput form-control gj-textbox-md" id="fecha_Final" width="" data-datepicker="true">
+              <!--
+             <input value=""   type="time" name="hora_Final"  class="numberinput form-control gj-textbox-md" id="hora_Final" width="" data-datepicker="true"> 
+              --> 
+             </div>
+                     <!--FECHA INVALIDAR PARA EVITAR REGISTROS DUPLICADOS--> 
+        <input value="0001-01-01" type="text" name="fecha_invalidar" class="numberinput form-control gj-textbox-md " id="fecha_invalidar" width="" data-datepicker="true" style="display: none;" > 
+                     <!--FECHA INVALIDAR PARA EVITAR REGISTROS DUPLICADOS--> 
+
+             <!--FECHA_Y_HORA_FINAL--> 
+                  </div>
+                  <div class="col-md-6
+                  ">
+                     <!--NOMBRE--> 
+                <div id="div_id_nombre" class="mb-3">
+                  <label for="id_nombre" class="form-label">
+                      Nombre
+                  </label>
+                  <input class="form-group numberinput form-control gj-textbox-md" type="text" name="nombre" maxlength="250" value="" id="id_nombre" required> 
+                </div>         
+                   <!--NOMBRE-->
+  
+
+                  </div>
+                 </div>
+
+                 <!--FECHA_IMPRESION REPORTE Y AUDITORIA--> 
+                 <input value="{{item.fecha_impresion|date:'Y-m-d H:i'}}" type="text" name="fecha_impresion" class="numberinput form-control gj-textbox-md " id="fecha_impresion" width="" data-datepicker="true" style="display: none;"> 
+                 <input value="{{item.fecha_reporte|date:'Y-m-d H:i'}}" type="text" name="fecha_reporte" class="numberinput form-control gj-textbox-md " id="fecha_reporte" width="" data-datepicker="true" style="display: none;" > 
+                 <input value="{{item.fecha_auditada|date:'Y-m-d H:i'}}" type="text" name="fecha_auditada" class="numberinput form-control gj-textbox-md " id="fecha_auditada" width="" data-datepicker="true" style="display: none;"> 
+                 <!--FECHA_IMPRESION REPORTE Y AUDITORIA--> 
+                     <!--SISTEMA-->
+                   
+                     <label for="id_sistema" class="form-label">Sistema</label>
+                     <div class="form-group">
+                     <select name="sistema" style="width: 100%;" class="sistemaCreacion" title="" required="" id="id_sistema">
+                       <option></option>
+                       {% for item1 in sistema.all %}
+                     <option value="{{item1.id}}">{{item1}}</option>
+                     {% endfor %}
+                   </select>
+                 </div>
+                   <!--SISTEMA-->
+
+             <!-- GRUPO SELECTO INICIO  -->
+                       <!--PROTOCOLO METODO-->
+                     <div id="protocolosMetodos" style="display: none;">
+                      <label for="id_protocolo" class="form-label">Protocolo de Método</label>
+                      <div class="form-group" >
+                        <select name="protocolo" style="width: 100%;"  id="id_protocolo" class="protocoloMetodoCreacion">
+                         <option></option>
+                         {% for item1 in protocolos.all %}
+                          {% if item1.estado_protocolo.id == 1 and item1.condicion == "Activo"  %}
+                         
+                          <option value="{{item1.id}}">{{item1}}</option>
+                          {% endif %}
+                          {% endfor %}
+                        </select>
+                      </div>
+                     </div>  
+                     <!--PROTOCOLO METODO-->
+                    <div id="parametros" style="display: none;">
+                      <label for="id_parametro_sq">Parametro</label>
+                      <div class="form-group">
+                      <select style="width: 100%;"  name="parametro_sq" class="parametroCreacion"  title=""  id="id_parametro_sq">
+                        <option></option>
+                        {% for item1 in parametros.all %}
+                      <option value="{{item1.id}}">{{item1}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                    </div> 
+                    <!--PARAMETRO-->
+              <!--PROTOCOLO PROCESO-->
+                 <div id="protocolosProceso" style="display: none;">
+                  <label for="id_protocolo_proceso">Protocolo de Proceso</label>
+                  <div class="form-group" >
+                    <select name="protocolo_proceso" style="width: 100%;" id="id_protocolo_proceso" class="protocoloProcesoCreacion">
+                      <option></option>
+                      {% for item1 in protocolos_proceso.all %}
+                      {% if item1.estado_del_proceso.id == 1 and item1.condicion == "Activo"  %}
+                      <option value="{{item1.id}}">{{item1}}</option>
+                      {% endif %}
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <br>
+                 </div>
+                  <!--PROTOCOLO PROCESO-->
+                  <div id="metodos" style="display: none;">
+                <!--METODO-->
+              <label for="id_metodo">Método</label>
+              <div class="form-group ">
+              <select name="metodo" style="width: 100%;" class="metodoCreacion" title="" required="" id="id_metodo">
+              <option></option>
+              {% for item1 in metodo.all %}
+              <option value="{{item1.id}}">{{item1}}</option>
+              {% endfor %}
+              </select>
+              </div><br>
+               <!--METODO-->
+                    
+
+                  </div>
+                  
+                    <!--MUESTRA PROCESO -->
+                    <div id="muestrasProceso" style="display: none;">
+                      <label for="id_muestras" class="form-label">Muestras (Proceso, estabilidad o ensayo) </label>
+                      <div class="form-group">
+                      <select style="width: 100%;"  name="muestras" class="muestrasCreacion"  title=""  id="id_muestras">
+                        <option></option>
+                        {% for item1 in muestras.all %}
+                        <option value="{{item1.id}}">{{item1.nombre_muestra}} {{item1.lote_muestra}} {{item1.etapa}} {{item1.codigo_muestra_producto}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                    </div>
+                <br>
+                    <!--MUESTRA PROCESO -->
+                    <!--OBSERVACIONES-->
+                    <div id="observaciones" style="display: none;">
+                      <label for="id_observaciones" class="form-label ">
+                          Observaciones<span class=""></span>
+                      </label>
+              <textarea name="observaciones" value="" cols="40" rows="3" class="numberinput form-control gj-textbox-md"  id="id_observaciones" required="">{{item.observaciones}}</textarea>
+              </div>
+              <!--OBSERVACIONES-->
+             <!-- GRUPO SELECTO FIN ----->
+
+
+             <h7><strong>Por favor seleccione:</strong></h7>
+             <div class="py-2">
+              <div id="ocultar1">
+                <input type="checkbox" name="check" id="check" onChange="protocolosMetodos(this);">
+                <label for="check" class="text-secondary">Protocolo de Método</label>
+              </div>
+              <div id="ocultar" style="display: true;">
+                <input type="checkbox" name="check" id="check1" onChange="proceso(this);">
+                <label for="check1" class="text-secondary">Protocolo de Proceso</label>
+              </div>
+              <div id="ocultar2" style="display: true;">
+                <input type="checkbox" name="check" id="check2" onChange="otro(this);">
+                <label for="check2" class="text-secondary">Otro</label>
+              </div>
+  
+             </div>
+                        
+  <!--------------------------------Formulario Creación Modal Fin------------------------------------------------>
+    
+                    <!--SCRIPTS INICIO PARA SELECT2-->
+                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+                    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+          <script>
+          $('.protocoloMetodoCreacion').css('width', '100%').select2({
+          //theme: "classic",
+          dropdownParent:$("#crear_secuencias_en_curso .modal-body"),
+          placeholder:"seleccione"
+          });
+          </script>
+         <script>
+          $('.protocoloProcesoCreacion').css('width', '100%').select2({
+          //theme: "classic",
+          dropdownParent:$("#crear_secuencias_en_curso .modal-body"),
+          placeholder:"seleccione"
+          });
+          </script>
+         <script>
+          $('.sistemaCreacion').css('width', '100%').select2({
+          //theme: "classic",
+          dropdownParent:$("#crear_secuencias_en_curso .modal-body"),
+          placeholder:"seleccione"
+          });
+          </script> 
+         <script>
+          $('.metodoCreacion').css('width', '100%').select2({
+          //theme: "classic",
+          dropdownParent:$("#crear_secuencias_en_curso .modal-body"),
+          placeholder:"seleccione"
+          });
+          </script> 
+         <script>
+          $('.parametroCreacion').css('width', '100%').select2({
+          //theme: "classic",
+          dropdownParent:$("#crear_secuencias_en_curso .modal-body"),
+          placeholder:"seleccione"
+          });
+          </script>
+         <script>
+          $('.muestrasCreacion').css('width', '100%').select2({
+          //theme: "classic",
+          dropdownParent:$("#crear_secuencias_en_curso .modal-body"),
+          placeholder:"seleccione"
+          });
+          </script>   
+                    <!--SCRIPTS FINAL PARA SELECT2--> 
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" onclick='salir(event)'>Cerrar</button>
+                      <button type="submit" onclick='confirmar(event)' class="btn btn-primary" style="background-color: #1b3d70c2;" >Guardar</button>
+                    </div>
+                </form>
+                       <!-- Validación de campos -->
+
+ 
+              </div>
+            </div>
+          </div>
+
+
+          <!-- Formulario Creacion Modal Final -->
+        </div>
+        </div>
+        </div>
+    </div>
+
+
+  <!--Data-table-->
+  <script>
+    new DataTable('#example3', {
+     searching:false,
+     "bPaginate": false,
+ "bLengthChange": true,
+ "bFilter": false,
+ "bInfo": false,
+ "bAutoWidth": false,
+ "striped": false,
+  "bottomEnd": 'bPaginate'
+ 
+    });
+ </script>
+  <!--Data-table-->
+  <script>
+    function confirmar(event) { 
+      let nombre = document.forms["myFormCreacion"]["nombre"].value;
+      let fechaInicio = document.forms["myFormCreacion"]["fecha_Inicio"].value;
+      let sistema = document.forms["myFormCreacion"]["sistema"].value;
+      let parametro_sq = document.forms["myFormCreacion"]["parametro_sq"].selectedIndex;
+      let protocolo = document.forms["myFormCreacion"]["protocolo"].selectedIndex;
+      let protocolo_proceso = document.forms["myFormCreacion"]["protocolo_proceso"].selectedIndex;
+      let metodo = document.forms["myFormCreacion"]["metodo"].selectedIndex;
+      let muestras = document.forms["myFormCreacion"]["muestras"].selectedIndex;
+      let observaciones = document.forms["myFormCreacion"]["observaciones"].value;
+        if (protocolo_proceso == "" && protocolo == "" && metodo == "" || protocolo_proceso == "" && metodo=="" &&      parametro_sq=="" || protocolo_proceso == "" && protocolo == "" && muestras == "" ) {
+        alert("Todos los campos son obligatorios");
+        e.preventDefault();}
+        if (observaciones == "") {
+        alert("favor registre el campo de observaciones")
+        e.preventDefault();}
+        if (protocolo == "" && muestras=="" && metodo=="") {
+        alert("Todos los campos son obligatorios");
+        e.preventDefault();}
+        if (nombre.length <= 8) {
+        alert("El nombre de secuencia es muy corto!");
+        e.preventDefault();}
+      event.preventDefault();
+      Swal.fire({
+    title: "Está seguro?",
+    text: "Por favor, confirme la creación de secuencia!",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Confimar!"
+      }).then((result) => {
+          if (result.isConfirmed) {
+            document.getElementById('myFormCreacion').submit();
+          }
+      })
+  }
+  </script>
+      <script>
+        function confirmarEstado(event) { 
+          //problemas_equipo_1
+         event.preventDefault();
+          Swal.fire({
+        title: "Está seguro?",
+        text: "Por favor, confirme la actualización del estado",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Confirmar!"
+          }).then((result) => {
+              if (result.isConfirmed) {
+                document.getElementById('myModelFormActualizar').submit();
+              }
+          })
+      }
+      </script>
+                  <script>
+              function protocolosMetodos(obj) {
+                if (obj.checked) {
+                  document.getElementById("protocolosMetodos").style.display =""
+                }else {
+                  document.getElementById("protocolosMetodos").style.display = "none"
+                }
+                if (obj.checked) {
+                  document.getElementById("parametros").style.display =""
+                }else {
+                  document.getElementById("parametros").style.display = "none"
+                }
+                if (obj.checked) {
+                  document.getElementById("observaciones").style.display =""
+                }else {
+                  document.getElementById("observaciones").style.display = "none"
+                }
+                if (obj.checked) {
+                  document.getElementById("ocultar").style.display ="none"
+                  document.getElementById("ocultar2").style.display ="none"
+                }
+              }
+            </script>
+
+            <script>
+              function proceso(obj) {
+                if (obj.checked) {
+                  document.getElementById("protocolosProceso").style.display =""
+                }else {
+                  document.getElementById("protocolosProceso").style.display = "none"
+                }
+                if (obj.checked) {
+                  document.getElementById("muestrasProceso").style.display =""
+                }else {
+                  document.getElementById("muestrasProceso").style.display = "none"
+                }
+                if (obj.checked) {
+                  document.getElementById("observaciones").style.display =""
+                }else {
+                  document.getElementById("observaciones").style.display = "none"
+                }
+                if (obj.checked) {
+                  document.getElementById("ocultar1").style.display ="none"
+                  document.getElementById("ocultar2").style.display ="none"
+                }
+              }
+            </script><br>
+            <script>
+              function otro(obj) {
+                if (obj.checked) {
+                  document.getElementById("metodos").style.display =""
+                }else {
+                  document.getElementById("metodos").style.display = "none"
+                }
+                if (obj.checked) {
+                  document.getElementById("muestrasProceso").style.display =""
+                }else {
+                  document.getElementById("muestrasProceso").style.display = "none"
+                }
+                if (obj.checked) {
+                  document.getElementById("observaciones").style.display =""
+                }else {
+                  document.getElementById("observaciones").style.display = "none"
+                }
+                if (obj.checked) {
+                  document.getElementById("ocultar").style.display ="none"
+                  document.getElementById("ocultar1").style.display ="none"
+                }
+              }
+            </script><br>
+            <script>
+      function ocultarPe() {
+      var invalidar = document.getElementById("botonInvalidar");
+      var nuevasecuencia = document.getElementById("nuevaSecuencia");
+      var validarsecuencia = document.getElementById("botonValidarSecuencia");
+      //var actualizarestado = document.getElementById("actualizarEstado");
+      var cancelarestado = document.getElementById("cancelarEstado");
+       if (invalidar.style.display === "" || nuevasecuencia.style.display === "" || validarsecuencia.style.display === "" || actualizarestado.style.display === "none" || cancelarestado.style.display === "none") {
+        invalidar.style.display = "none";
+        nuevasecuencia.style.display = "none";
+        validarsecuencia.style.display = "none";
+        //actualizarestado.style.display = "";
+        cancelarestado.style.display = "";
+         } 
+}           
+ </script>
+            <script>
+              function ocultarIn() {
+              //var invalidar = document.getElementById("botonInvalidar");
+              var nuevasecuencia = document.getElementById("nuevaSecuencia");
+              var validarsecuencia = document.getElementById("botonValidarSecuencia");
+              //var actualizarestado = document.getElementById("actualizarEstado");
+              var cancelarestado = document.getElementById("cancelarEstado");
+               if ( nuevasecuencia.style.display === "" || validarsecuencia.style.display === "" || actualizarestado.style.display === "none" || cancelarestado.style.display === "none") {
+                //invalidar.style.display = "none";
+                nuevasecuencia.style.display = "none";
+                validarsecuencia.style.display = "none";
+                //actualizarestado.style.display = "";
+                cancelarestado.style.display = "";
+                 } 
+        }           
+         </script>
+         <script>
+          //ocultarEstado_invalidar
+          function ocultarEstado_invalidar(obj) {
+                if (obj.checked) {
+                  document.getElementById("actualizarEstado").style.display =""
+                }else {
+                  document.getElementById("actualizarEstado").style.display = "none"
+                }
+              }
+         </script>
+    <script>
+     function deshabilitarIn() {
+    var button = document.getElementById('botonInvalidar');
+    if (button.style.display=="") {
+      button.style.display = "none";
+    }
+    }
+  </script>        
+
+  <script>
+    function salir(event) { 
+      event.preventDefault();
+      Swal.fire({
+    title: "Desea salir?",
+    text: "Tu información no será guardada!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Confirmar",
+    cancelButtonText: "Cancelar"
+  }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/crear_secuencias_en_curso'
+          }
+      })
+  }
+  </script>
+  <script>
+    function showInp() {
+      getSelectValue = document.getElementById("validar").value
+      if(getSelectValue=="selectValidar") {
+        document.getElementById("checkValidar").style.display = ""
+      }else {
+        document.getElementById("checkValidar").style.display = "none"
+      }
+    }
+  </script>
+
+
+{% endblock contenido %}

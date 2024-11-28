@@ -1,0 +1,170 @@
+{% extends "protocolo_metodos/base_crear_protocolo_metodos.html" %}
+
+{% block contenido %}
+{% load bootstrap5 %}
+{% load static %}
+
+
+  <div class="container-fluid">
+    <div class="row">
+        <!---------------------------------------Inicio Columna 1------------------------------------------------------>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h1 class="card-title">Registrar Protocolos</h1>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+              <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-remove"></i></button>
+            </div>
+          </div>
+          <div class="card-body">
+            <form action="" method="POST">
+              {% csrf_token %}
+
+              <label for="" class="">Fecha de ingreso</label>
+              <div class="form-group">
+                <input type="date" class="form-control" placeholder="Fecha de ingreso" name="txtFechaIngreso" id="txtFechaIngreso" required> 
+              </div>
+              <label for="" class="">Código</label>
+              <div class="form-group">
+                <input type="txt" class="form-control" placeholder="Código" name="txtCodigo" id="txtCodigo" required> 
+             
+              </div>
+              <label for="" class="">Nombre</label>
+              <div class="form-group">
+                <textarea class="form-control" name="nombreProtocolo" id="nombreProtocolo" placeholder="Título del Protocolo" rows="6" required></textarea>
+              </div>
+              <label for="" class="form-">Metodologia</label>
+              <div class="form-group">
+                <select class="form-select" id="seleccionMetodologia" data-placeholder="Selecciona" name="seleccionMetodologia_id" required>
+                  <option></option>
+                  {% for item in seleccionarMetodologia %}
+                  <option value="{{item.id}}">{{item.nombre_metodologia}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            
+              <label for="" class="form-">Estado Protocolo</label>
+              <div class="form-group">
+                <select class="form-select" id="estadoProtocolo" data-placeholder="Selecciona" name="estadoProtocolo_id" required>
+                  <option></option>
+                  {% for item in seleccionarEstadoProtocolo %}
+                  <option value="{{item.id}}">{{item.estado_protocolos}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+               <label for="" class="">Muestras y placebos</label>
+               <div class="form-group">
+                <select class="form-check-input" name="muestrasyPlacebos" id="multiple-select-field" data-placeholder="Selecciona" multiple required>
+                  {% for item in ingresar_muestras %}
+                  <option value="{{item.id}}"> {{item.nombre_muestras_y_placebos}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+                <script>
+            $( '#multiple-select-field' ).select2( {
+            theme: "bootstrap-5",
+             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+              placeholder: $( this ).data( 'placeholder' ),
+               closeOnSelect: false,
+              } );
+                </script>
+               
+          
+          </div>
+        </div>
+      </div>
+
+      <!---------------------------------------------Inicio Columna 2------------------------------------------------------>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h1 class="card-title">Registrar Protocolos</h1>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+              <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-remove"></i></button>
+            </div>
+          </div>
+          <div class="card-body">
+               <label for="" class="form-label">Parámetros</label> 
+               <div class="form-group">
+                <select class="multiple-select" title="" style="width: 100%;" id="my-select" required name="txtParametro_id" multiple="multiple"style=width: 100%;>
+                  {% for item in seleccionarParametro %}
+                  <option value="{{item.id }}">{{item.nombre_Parametro}}</option>
+                  {% endfor %}
+              </select >
+               </div>
+              
+             <script>
+             do {
+            $("#my-select").multipleSelect({
+           filter: true,
+           placeholder: "----",
+           theme: "classic",
+           allowClear: true,
+           width: '100%',
+            });
+          } while (condition);
+          </script>
+                <label for="" class="form-">Ensayo</label>
+               <div class="form-group">
+                <select class="form-select" id="txtEnsayo" data-placeholder="Selecciona" name="txtEnsayo_id" required>
+                  <option></option>
+                  {% for item in seleccionarEnsayo %}
+                  <option value="{{item.pk}}">{{item.nombre_ensayo}}</option>
+                  {% endfor %}
+                </select>
+               </div>
+                <script>
+                  $( '#txtEnsayo' ).select2( {
+                    theme: "bootstrap-5",
+                    width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+                    placeholder: $( this ).data( 'placeholder' ),
+                } );
+                </script>
+                  <label for="" class="form-">Insumos del Proceso</label>
+                  <div class="form-group">
+                    {% for item in seleccionarViabilidad %}
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" name="insumosProceso" option value="{{item.id}}"> {{item.nombre_viabilidad}}</option>
+  
+                    </div>
+                    {% endfor %}
+                  </div>
+                <label for="" class="">Observaciones</label>
+              <div class="form-group">
+                <textarea class="form-control" name="txtObserbaciones" id="txtObserbaciones" placeholder="Observaciones" rows="10" required></textarea>
+              </div>
+               
+                <div class="form-group">
+                    <div class=""><input type="submit" name="form-crear" value="Guardar" class="btn btn-primary" id="submit-id-submit" /></div>
+                </div>
+              </form>
+          
+          </div>
+        </div>
+      </div>
+   
+    </div>
+
+   
+  </div>
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+  
+  
+
+  {% endblock contenido %}
+

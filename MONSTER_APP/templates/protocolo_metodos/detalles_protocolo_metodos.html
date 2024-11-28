@@ -1,0 +1,33 @@
+{% extends "partial/body.html" %}
+
+{% load crispy_forms_tags %}
+{% load crispy_forms_filters %}
+{% block contenido %}
+{% load bootstrap5 %}
+
+
+  <div class="container-fluid">
+
+
+
+    <div class="callout callout-info">
+      <h5><i class="fas fa-info"></i> Nombre:</h5>
+      {% for p in pkt %}
+            
+
+      {{p.nombre}}
+      {% endfor %}
+      </div>
+
+      
+      
+
+
+  </div>
+
+
+
+
+
+
+{% endblock contenido %}
